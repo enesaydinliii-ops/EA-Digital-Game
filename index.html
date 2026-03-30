@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EA DIGITAL – Dil Öğrenme</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+<style>
+:root {
+  --green: #58cc02;
+  --green-dark: #46a302;
+  --blue: #1cb0f6;
+  --blue-dark: #0d8dc7;
+  --red: #ff4b4b;
+  --red-dark: #c93737;
+  --yellow: #ffc800;
+  --purple: #ce82ff;
+  --orange: #ff9600;
+  --bg: #f7f7f7;
+  --card: #ffffff;
+  --text: #3c3c3c;
+  --text-muted: #afafaf;
+  --border: #e5e5e5;
+  --shadow: 0 4px 0 rgba(0,0,0,0.12);
+  --radius: 16px;
+  --font: 'Nunito', sans-serif;
+  --font-display: 'Baloo 2', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.app {
+  width: 100%;
+  max-width: 480px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* SCREEN SYSTEM */
+.screen { display: none; flex-direction: column; flex: 1; animation: fadeIn 0.3s ease; }
+.screen.active { display: flex; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ===== LOGIN SCREEN ===== */
+.login-hero {
+  background: linear-gradient(135deg, #58cc02 0%, #1cb0f6 100%);
+  border-radius: 0 0 40px 40px;
+  padding: 60px 30px 50px;
+  text-align: center;
+  color: white;
+}
+.login-hero .owl { font-size: 80px; margin-bottom: 10px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2)); }
+.login-hero h1 { font-family: var(--font-display); font-size: 2.2rem; font-weight: 800; letter-spacing: -0.5px; }
+.login-hero p { font-size: 1rem; opacity: 0.9; margin-top: 6px; }
+.login-body { padding: 30px 24px; flex: 1; }
+.login-body label { font-weight: 700; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 8px; }
+
+/* ===== INPUTS ===== */
+input[type=text] {
+  width: 100%;
+  padding: 16px 18px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-family: var(--font);
+  font-weight: 600;
+  outline: none;
+  transition: border-color 0.2s;
+  background: white;
+}
+input[type=text]:focus { border-color: var(--blue); }
+
+/* ===== BUTTONS ===== */
+.btn {
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  padding: 16px 24px;
+  width: 100%;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-transform: uppercase;
+}
+.btn:active { transform: translateY(2px); }
+
+.btn-green { background: var(--green); color: white; box-shadow: 0 4px 0 var(--green-dark); }
+.btn-green:active { box-shadow: none; }
+.btn-blue { background: var(--blue); color: white; box-shadow: 0 4px 0 var(--blue-dark); }
+.btn-blue:active { box-shadow: none; }
+.btn-ghost { background: white; color: var(--text); border: 2px solid var(--border); box-shadow: 0 4px 0 var(--border); }
+.btn-ghost:active { box-shadow: none; }
+.btn-red { background: var(--red); color: white; box-shadow: 0 4px 0 var(--red-dark); }
+.btn-red:active { box-shadow: none; }
+.btn-yellow { background: var(--yellow); color: #3c3c3c; box-shadow: 0 4px 0 #c99800; }
+.btn-yellow:active { box-shadow: none; }
+.btn-sm { padding: 10px 16px; font-size: 0.8rem; width: auto; border-radius: 12px; }
+
+/* ===== HOME SCREEN ===== */
+.home-header {
+  background: linear-gradient(135deg, #58cc02, #1cb0f6);
+  padding: 30px 24px 24px;
+  border-radius: 0 0 28px 28px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.home-header .user-info h2 { font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; }
+.home-header .user-info p { font-size: 0.85rem; opacity: 0.9; }
+.avatar { width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; border: 3px solid white; }
+
+.stats-row {
+  display: flex;
+  gap: 10px;
+  padding: 20px 24px 0;
+}
+.stat-card {
+  flex: 1;
+  background: white;
+  border-radius: var(--radius);
+  padding: 14px;
+  text-align: center;
+  border: 2px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.stat-card .val { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; }
+.stat-card .lbl { font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
+.stat-card.green .val { color: var(--green); }
+.stat-card.blue .val { color: var(--blue); }
+.stat-card.yellow .val { color: var(--yellow); }
+.stat-card.purple .val { color: var(--purple); }
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 800;
+  padding: 20px 24px 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.8rem;
+}
+
+.lang-cards { display: flex; gap: 12px; padding: 0 24px; }
+.lang-card {
+  flex: 1;
+  background: white;
+  border-radius: 20px;
+  padding: 20px 14px;
+  text-align: center;
+  border: 3px solid var(--border);
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+.lang-card:hover, .lang-card.selected { border-color: var(--blue); background: #f0f9ff; transform: translateY(-2px); }
+.lang-card .flag { font-size: 2.5rem; }
+.lang-card .name { font-weight: 800; font-size: 0.9rem; margin-top: 6px; }
+
+.mode-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 0 24px;
+  margin-top: 4px;
+}
+.mode-tab {
+  flex: 1;
+  padding: 12px;
+  border-radius: 14px;
+  border: 2px solid var(--border);
+  background: white;
+  font-weight: 800;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  color: var(--text-muted);
+}
+.mode-tab.active { border-color: var(--green); background: #f0fff0; color: var(--green-dark); }
+
+.diff-cards { display: flex; gap: 8px; padding: 0 24px; }
+.diff-card {
+  flex: 1;
+  padding: 12px 6px;
+  border-radius: 14px;
+  border: 2px solid var(--border);
+  background: white;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 800;
+  font-size: 0.8rem;
+}
+.diff-card.active.easy { border-color: var(--green); background: #f0fff0; color: var(--green-dark); }
+.diff-card.active.medium { border-color: var(--yellow); background: #fffdf0; color: #a07800; }
+.diff-card.active.hard { border-color: var(--red); background: #fff0f0; color: var(--red-dark); }
+
+.home-actions { padding: 20px 24px; margin-top: auto; display: flex; flex-direction: column; gap: 10px; }
+
+/* ===== GAME SCREEN ===== */
+.game-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 2px solid var(--border);
+  background: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.close-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: #f0f0f0;
+  font-size: 1.1rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.close-btn:hover { background: #e0e0e0; }
+.progress-bar-wrap { flex: 1; height: 16px; background: #e5e5e5; border-radius: 99px; overflow: hidden; }
+.progress-bar { height: 100%; background: linear-gradient(90deg, var(--green), #7cdb02); border-radius: 99px; transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.hearts-display { display: flex; gap: 3px; font-size: 1.2rem; flex-shrink: 0; }
+
+.game-body { flex: 1; padding: 20px; overflow-y: auto; }
+
+.question-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f0f9ff;
+  color: var(--blue);
+  border-radius: 99px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 14px;
+}
+
+.question-prompt {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.word-card {
+  background: white;
+  border: 3px solid var(--border);
+  border-radius: 24px;
+  padding: 28px 20px;
+  text-align: center;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+  position: relative;
+}
+.word-card:hover { border-color: var(--blue); transform: translateY(-1px); }
+.word-card .word-text { font-family: var(--font-display); font-size: 2rem; font-weight: 800; line-height: 1.2; }
+.word-card .word-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; font-weight: 700; }
+.word-card .speak-hint { position: absolute; bottom: 10px; right: 14px; font-size: 0.7rem; color: var(--text-muted); }
+.speak-btn-card {
+  position: absolute;
+  top: 12px; right: 12px;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: #f0f9ff;
+  border: 2px solid #d0e8ff;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.speak-btn-card:hover { background: #d0e8ff; }
+
+.input-area { margin-top: 16px; }
+.input-area input {
+  margin-bottom: 10px;
+  border-radius: 20px;
+  padding: 16px 20px;
+  font-size: 1.1rem;
+}
+
+.answer-btns { display: flex; gap: 10px; margin-top: 6px; }
+.answer-btns .btn { flex: 1; }
+
+.or-divider {
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.or-divider::before, .or-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.mic-btn-big {
+  width: 100%;
+  background: white;
+  border: 3px solid var(--border);
+  border-radius: 20px;
+  padding: 18px;
+  font-size: 1rem;
+  font-weight: 800;
+  font-family: var(--font);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--text);
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+.mic-btn-big:hover { border-color: var(--red); color: var(--red); }
+.mic-btn-big.listening {
+  background: #fff0f0;
+  border-color: var(--red);
+  color: var(--red);
+  animation: pulsate 1.5s infinite;
+}
+@keyframes pulsate {
+  0%, 100% { box-shadow: 0 4px 0 var(--border), 0 0 0 0 rgba(255,75,75,0.4); }
+  50% { box-shadow: 0 4px 0 var(--border), 0 0 0 12px rgba(255,75,75,0); }
+}
+
+/* FEEDBACK PANEL */
+.feedback-panel {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  padding: 20px;
+  border-radius: 24px 24px 0 0;
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 100;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.feedback-panel.show { transform: translateY(0); }
+.feedback-panel.correct { background: #d7ffb8; border-top: 4px solid var(--green); }
+.feedback-panel.wrong { background: #ffdfe0; border-top: 4px solid var(--red); }
+.feedback-panel h3 { font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; margin-bottom: 4px; }
+.feedback-panel.correct h3 { color: var(--green-dark); }
+.feedback-panel.wrong h3 { color: var(--red-dark); }
+.feedback-panel p { font-size: 0.9rem; font-weight: 600; margin-bottom: 14px; }
+.feedback-panel.correct p { color: var(--green-dark); }
+.feedback-panel.wrong p { color: var(--red-dark); }
+
+/* ===== PRONUNCIATION SCREEN ===== */
+.pronun-card {
+  background: white;
+  border-radius: 24px;
+  border: 3px solid var(--border);
+  padding: 24px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+}
+.pronun-card .target-text { font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; text-align: center; margin: 10px 0; }
+.pronun-card .phonetic { font-size: 0.85rem; color: var(--text-muted); text-align: center; font-weight: 700; }
+.score-ring {
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  border: 6px solid var(--border);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  margin: 16px auto;
+  font-family: var(--font-display);
+}
+.score-ring .num { font-size: 1.6rem; font-weight: 800; line-height: 1; }
+.score-ring .lbl { font-size: 0.6rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+.score-ring.great { border-color: var(--green); color: var(--green); }
+.score-ring.ok { border-color: var(--yellow); color: #a07800; }
+.score-ring.poor { border-color: var(--red); color: var(--red); }
+
+.word-highlight { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; margin: 10px 0; }
+.syllable { padding: 4px 10px; border-radius: 8px; font-weight: 700; font-size: 1rem; }
+.syllable.correct { background: #d7ffb8; color: var(--green-dark); }
+.syllable.wrong { background: #ffdfe0; color: var(--red-dark); }
+.syllable.neutral { background: #f0f0f0; color: var(--text); }
+
+/* ===== LEVEL UP OVERLAY ===== */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 20px;
+}
+.overlay.show { display: flex; }
+.overlay-card {
+  background: white;
+  border-radius: 28px;
+  padding: 36px 28px;
+  text-align: center;
+  max-width: 360px;
+  width: 100%;
+  animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.overlay-card .big-icon { font-size: 5rem; margin-bottom: 10px; }
+.overlay-card h2 { font-family: var(--font-display); font-size: 2rem; font-weight: 800; }
+.overlay-card p { color: var(--text-muted); font-weight: 600; margin: 10px 0 20px; }
+
+/* ===== PROFILE SCREEN ===== */
+.profile-header {
+  background: linear-gradient(135deg, #ce82ff, #1cb0f6);
+  padding: 40px 24px 30px;
+  border-radius: 0 0 28px 28px;
+  color: white;
+  text-align: center;
+}
+.profile-avatar { font-size: 4rem; margin-bottom: 8px; }
+.profile-name { font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; }
+.badge-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 24px; }
+.badge-item {
+  background: white;
+  border-radius: var(--radius);
+  padding: 14px 8px;
+  text-align: center;
+  border: 2px solid var(--border);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+.badge-item .badge-icon { font-size: 1.8rem; margin-bottom: 4px; }
+.badge-item.earned { border-color: var(--yellow); background: #fffdf0; color: #a07800; }
+
+/* NAV BAR */
+.nav-bar {
+  display: flex;
+  background: white;
+  border-top: 2px solid var(--border);
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}
+.nav-item {
+  flex: 1;
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: var(--font);
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  transition: color 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.nav-item .icon { font-size: 1.4rem; }
+.nav-item.active { color: var(--green); }
+
+/* SCROLLABLE CONTENT */
+.scroll-body { flex: 1; overflow-y: auto; padding-bottom: 10px; }
+
+/* STREAK FLAME */
+.streak { color: var(--orange); }
+
+/* Typing feedback */
+.input-correct { border-color: var(--green) !important; background: #f0fff0 !important; }
+.input-wrong { border-color: var(--red) !important; background: #fff0f0 !important; }
+
+/* Responsive */
+@media (max-width: 400px) {
+  .word-card .word-text { font-size: 1.6rem; }
+  .lang-card .flag { font-size: 2rem; }
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ===== LOGIN SCREEN ===== -->
+  <div id="login-screen" class="screen active">
+    <div class="login-hero">
+      <div class="owl">🦉</div>
+      <h1>EA DIGITAL</h1>
+      <p>Dil öğrenmek hiç bu kadar eğlenceli olmamıştı!</p>
+    </div>
+    <div class="login-body scroll-body">
+      <div style="margin-bottom: 20px;">
+        <label>KULLANICI ADINIZ</label>
+        <input type="text" id="username-input" placeholder="Adınızı girin..." maxlength="20">
+      </div>
+      <button class="btn btn-green" onclick="login()" style="margin-top: 10px;">🚀 BAŞLAYALIM</button>
+      <p style="text-align:center; color: var(--text-muted); font-size: 0.8rem; margin-top: 16px; font-weight: 600;">
+        İlerlemeniz otomatik kaydedilir.
+      </p>
+    </div>
+  </div>
+
+  <!-- ===== HOME SCREEN ===== -->
+  <div id="home-screen" class="screen">
+    <div class="home-header">
+      <div class="user-info">
+        <h2 id="home-username">Merhaba!</h2>
+        <p>Bugün öğrenmeye devam edelim 🔥</p>
+      </div>
+      <div class="avatar" onclick="showScreen('profile-screen')">🦉</div>
+    </div>
+
+    <div class="scroll-body">
+      <div class="stats-row">
+        <div class="stat-card green">
+          <div class="val" id="stat-score">0</div>
+          <div class="lbl">💎 Puan</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="val" id="stat-streak">0</div>
+          <div class="lbl">🔥 Seri</div>
+        </div>
+        <div class="stat-card yellow">
+          <div class="val" id="stat-level">1</div>
+          <div class="lbl">⭐ Seviye</div>
+        </div>
+        <div class="stat-card purple">
+          <div class="val" id="stat-words">0</div>
+          <div class="lbl">📚 Kelime</div>
+        </div>
+      </div>
+
+      <div class="section-title">🌍 DİL SEÇİN</div>
+      <div class="lang-cards">
+        <div class="lang-card selected" id="lang-en" onclick="selectLang('en-US')">
+          <div class="flag">🇬🇧</div>
+          <div class="name">İngilizce</div>
+        </div>
+        <div class="lang-card" id="lang-ar" onclick="selectLang('ar-SA')">
+          <div class="flag">🇸🇦</div>
+          <div class="name">Arapça</div>
+        </div>
+      </div>
+
+      <div class="section-title">🎮 SORU TÜRÜ</div>
+      <div class="mode-tabs">
+        <div class="mode-tab active" id="mode-word" onclick="selectMode('word')">🔤 Kelimeler</div>
+        <div class="mode-tab" id="mode-sent" onclick="selectMode('sent')">📝 Cümleler</div>
+        <div class="mode-tab" id="mode-mixed" onclick="selectMode('mixed')">🎲 Karışık</div>
+      </div>
+
+      <div class="section-title">💪 ZORLUK SEVİYESİ</div>
+      <div class="diff-cards">
+        <div class="diff-card active easy" id="diff-easy" onclick="selectDiff('easy')">🌱 Kolay</div>
+        <div class="diff-card medium" id="diff-medium" onclick="selectDiff('medium')">🔥 Orta</div>
+        <div class="diff-card hard" id="diff-hard" onclick="selectDiff('hard')">⚡ Zor</div>
+      </div>
+
+      <div class="home-actions">
+        <button class="btn btn-green" onclick="startGame('translate')">🌟 ÇEVIRI ALIŞTIRIMASI</button>
+        <button class="btn btn-blue" onclick="startGame('pronounce')">🎤 TELAFFUZ ALIŞTIRMASI</button>
+        <button class="btn btn-ghost" onclick="showScreen('profile-screen')">👤 PROFİLİM</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== GAME SCREEN ===== -->
+  <div id="game-screen" class="screen">
+    <div class="game-topbar">
+      <button class="close-btn" onclick="exitGame()">✕</button>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+      </div>
+      <div class="hearts-display" id="hearts-display">♾️</div>
+    </div>
+
+    <div class="game-body scroll-body">
+      <div class="question-type-badge" id="q-type-badge">🌟 Çeviri</div>
+      <div class="question-prompt" id="q-prompt">Türkçe karşılığını söyle ya da yaz:</div>
+
+      <div class="word-card" onclick="speakCurrent()">
+        <button class="speak-btn-card" onclick="speakCurrent(); event.stopPropagation();">🔊</button>
+        <div class="word-text" id="q-word">---</div>
+        <div class="word-sub" id="q-word-sub"></div>
+        <div class="speak-hint">Sesli dinlemek için dokun</div>
+      </div>
+
+      <div class="input-area">
+        <input type="text" id="text-answer" placeholder="Türkçe cevabınızı yazın..." autocomplete="off" oninput="liveCheck(this)">
+        <div class="answer-btns">
+          <button class="btn btn-green" onclick="checkAnswer()">✓ ONAYLA</button>
+          <button class="btn btn-ghost btn-sm" onclick="skipQuestion()">Atla ➡</button>
+        </div>
+      </div>
+
+      <div class="or-divider">VEYA</div>
+
+      <button class="mic-btn-big" id="mic-btn" onclick="toggleMic()">
+        🎤 <span id="mic-label">Sesli Cevap Ver</span>
+      </button>
+
+      <div style="height: 100px;"></div>
+    </div>
+
+    <!-- Feedback Panel -->
+    <div class="feedback-panel" id="feedback-panel">
+      <h3 id="feedback-title">Harika!</h3>
+      <p id="feedback-msg">Doğru cevap!</p>
+      <button class="btn btn-green" id="feedback-btn" onclick="nextQuestion()">DEVAM</button>
+    </div>
+  </div>
+
+  <!-- ===== PRONUNCIATION SCREEN ===== -->
+  <div id="pronun-screen" class="screen">
+    <div class="game-topbar">
+      <button class="close-btn" onclick="exitGame()">✕</button>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar" id="pronun-progress" style="width: 0%"></div>
+      </div>
+      <div class="hearts-display" id="pronun-hearts">♾️</div>
+    </div>
+
+    <div class="game-body scroll-body">
+      <div class="question-type-badge">🎤 Telaffuz Alıştırması</div>
+      <div class="question-prompt" id="pronun-prompt">Aşağıdaki ifadeyi sesli olarak söyleyin:</div>
+
+      <div class="pronun-card">
+        <div style="text-align:center; color: var(--text-muted); font-size: 0.8rem; font-weight: 700;">Söyleyin:</div>
+        <div class="target-text" id="pronun-target">---</div>
+        <div class="phonetic" id="pronun-phonetic"></div>
+        <div class="word-highlight" id="pronun-highlight"></div>
+      </div>
+
+      <div id="pronun-result" style="display:none;">
+        <div class="pronun-card">
+          <div style="text-align:center; color: var(--text-muted); font-size: 0.8rem; font-weight: 700; margin-bottom: 6px;">SİZİN SÖYLEDİĞİNİZ:</div>
+          <div style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; text-align: center;" id="heard-text">---</div>
+          <div class="score-ring" id="pronun-score-ring">
+            <div class="num" id="pronun-score-num">-</div>
+            <div class="lbl">Puan</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="mic-btn-big" id="pronun-mic-btn" onclick="startPronunMic()" style="margin-top: 10px;">
+        🎤 <span id="pronun-mic-label">Söylemeye Başla</span>
+      </button>
+
+      <button class="btn btn-blue" onclick="speakPronunTarget()" style="margin-top: 10px;">
+        🔊 Örnek Telaffuzu Dinle
+      </button>
+
+      <div id="pronun-btns" style="display:none; margin-top:10px; display:none;">
+        <div class="answer-btns">
+          <button class="btn btn-ghost" onclick="skipPronun()">Atla ➡</button>
+          <button class="btn btn-green" onclick="nextPronun()">Devam →</button>
+        </div>
+      </div>
+
+      <div style="height: 100px;"></div>
+    </div>
+
+    <div class="feedback-panel" id="pronun-feedback">
+      <h3 id="pronun-fb-title">Harika!</h3>
+      <p id="pronun-fb-msg"></p>
+      <button class="btn btn-green" onclick="nextPronun()">DEVAM</button>
+    </div>
+  </div>
+
+  <!-- ===== PROFILE SCREEN ===== -->
+  <div id="profile-screen" class="screen">
+    <div class="profile-header">
+      <div class="profile-avatar">🦉</div>
+      <div class="profile-name" id="profile-name">Kullanıcı</div>
+      <div style="opacity: 0.9; font-weight: 700; margin-top: 6px;" id="profile-level">Seviye 1 • Çaylak</div>
+    </div>
+
+    <div class="scroll-body" style="padding: 20px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+        <div class="stat-card green"><div class="val" id="p-score">0</div><div class="lbl">💎 Toplam Puan</div></div>
+        <div class="stat-card blue"><div class="val" id="p-streak">0</div><div class="lbl">🔥 En Uzun Seri</div></div>
+        <div class="stat-card yellow"><div class="val" id="p-words">0</div><div class="lbl">📚 Öğrenilen Kelime</div></div>
+        <div class="stat-card purple"><div class="val" id="p-correct">0</div><div class="lbl">✅ Doğru Cevap</div></div>
+      </div>
+
+      <div class="section-title">🏆 ROZETLER</div>
+      <div class="badge-grid" id="badge-grid"></div>
+
+      <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+        <button class="btn btn-green" onclick="showScreen('home-screen')">🏠 ANA SAYFA</button>
+        <button class="btn btn-ghost" onclick="resetData()">🔄 İlerlemeyi Sıfırla</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- LEVEL UP OVERLAY -->
+<div class="overlay" id="levelup-overlay">
+  <div class="overlay-card">
+    <div class="big-icon" id="lu-icon">⭐</div>
+    <h2 id="lu-title">Seviye Atladın!</h2>
+    <p id="lu-desc">Tebrikler, yeni seviyeye ulaştın!</p>
+    <button class="btn btn-yellow" onclick="closeLevelUp()">🎉 DEVAM ET</button>
+  </div>
+</div>
+
+<script>
+// ==================== VERİ TABANI ====================
+const DB = {
+  "en-US": {
+    word: {
+      easy: [
+        {q:"Cat", a:"kedi", hint:"Hayvan"}, {q:"Dog", a:"köpek", hint:"Hayvan"},
+        {q:"Book", a:"kitap", hint:"Nesne"}, {q:"Water", a:"su", hint:"İçecek"},
+        {q:"House", a:"ev", hint:"Yer"}, {q:"Car", a:"araba", hint:"Araç"},
+        {q:"Tree", a:"ağaç", hint:"Bitki"}, {q:"Sun", a:"güneş", hint:"Doğa"},
+        {q:"Moon", a:"ay", hint:"Doğa"}, {q:"Fire", a:"ateş", hint:"Doğa"},
+        {q:"Fish", a:"balık", hint:"Hayvan"}, {q:"Bird", a:"kuş", hint:"Hayvan"},
+        {q:"Bread", a:"ekmek", hint:"Yiyecek"}, {q:"Milk", a:"süt", hint:"İçecek"},
+        {q:"Apple", a:"elma", hint:"Meyve"}, {q:"Door", a:"kapı", hint:"Nesne"},
+        {q:"Road", a:"yol", hint:"Yer"}, {q:"Sea", a:"deniz", hint:"Doğa"},
+        {q:"Rain", a:"yağmur", hint:"Hava"}, {q:"Snow", a:"kar", hint:"Hava"}
+      ],
+      medium: [
+        {q:"Library", a:"kütüphane", hint:"Yer"}, {q:"Mountain", a:"dağ", hint:"Coğrafya"},
+        {q:"Ocean", a:"okyanus", hint:"Coğrafya"}, {q:"Success", a:"başarı", hint:"Kavram"},
+        {q:"Journey", a:"yolculuk", hint:"Eylem"}, {q:"Friendship", a:"arkadaşlık", hint:"Kavram"},
+        {q:"Freedom", a:"özgürlük", hint:"Kavram"}, {q:"Courage", a:"cesaret", hint:"Duygu"},
+        {q:"Wisdom", a:"bilgelik", hint:"Kavram"}, {q:"Patience", a:"sabır", hint:"Karakter"},
+        {q:"Generous", a:"cömert", hint:"Sıfat"}, {q:"Curious", a:"meraklı", hint:"Sıfat"},
+        {q:"Peaceful", a:"huzurlu", hint:"Sıfat"}, {q:"Beautiful", a:"güzel", hint:"Sıfat"},
+        {q:"Dangerous", a:"tehlikeli", hint:"Sıfat"}, {q:"Enormous", a:"devasa", hint:"Sıfat"},
+        {q:"Ancient", a:"antik", hint:"Sıfat"}, {q:"Harvest", a:"hasat", hint:"Tarım"},
+        {q:"Horizon", a:"ufuk", hint:"Doğa"}, {q:"Whisper", a:"fısıltı", hint:"Ses"}
+      ],
+      hard: [
+        {q:"Melancholy", a:"hüzün / melankolik his", hint:"Duygu"}, 
+        {q:"Ephemeral", a:"geçici / kalıcı olmayan", hint:"Sıfat"},
+        {q:"Serendipity", a:"mutlu tesadüf", hint:"Kavram"}, 
+        {q:"Eloquent", a:"belagatli / etkileyici konuşan", hint:"Sıfat"},
+        {q:"Ambiguous", a:"belirsiz / muğlak", hint:"Sıfat"},
+        {q:"Deteriorate", a:"kötüleşmek / bozulmak", hint:"Fiil"},
+        {q:"Phenomenon", a:"fenomen / olgu", hint:"Kavram"},
+        {q:"Hypothesis", a:"hipotez / varsayım", hint:"Bilim"},
+        {q:"Paradox", a:"paradoks / çelişki", hint:"Mantık"},
+        {q:"Nostalgia", a:"geçmişe özlem", hint:"Duygu"},
+        {q:"Resilience", a:"dayanıklılık / toparlanma gücü", hint:"Karakter"},
+        {q:"Sovereignty", a:"egemenlik / bağımsızlık", hint:"Siyaset"},
+        {q:"Introspection", a:"iç gözlem / öz sorgulaması", hint:"Psikoloji"},
+        {q:"Compassionate", a:"şefkatli / merhametli", hint:"Sıfat"},
+        {q:"Dilemma", a:"ikilem / çıkmaz", hint:"Kavram"}
+      ]
+    },
+    sent: {
+      easy: [
+        {q:"Hello, how are you?", a:"merhaba nasılsın", hint:"Selamlama"},
+        {q:"Good morning!", a:"günaydın", hint:"Selamlama"},
+        {q:"Thank you very much.", a:"çok teşekkür ederim", hint:"Nezaket"},
+        {q:"I am hungry.", a:"acıktım / karnım aç", hint:"Duygu"},
+        {q:"Where is the bathroom?", a:"tuvalet nerede", hint:"Yer"},
+        {q:"I don't understand.", a:"anlamıyorum", hint:"İletişim"},
+        {q:"My name is...", a:"benim adım... / adım...", hint:"Tanışma"},
+        {q:"I love you.", a:"seni seviyorum", hint:"Duygu"},
+        {q:"See you tomorrow.", a:"yarın görüşürüz", hint:"Veda"},
+        {q:"What time is it?", a:"saat kaç", hint:"Zaman"}
+      ],
+      medium: [
+        {q:"Where are you going?", a:"nereye gidiyorsun", hint:"Yer"},
+        {q:"I love learning languages.", a:"dil öğrenmeyi seviyorum", hint:"Hobi"},
+        {q:"How is the weather today?", a:"bugün hava nasıl", hint:"Hava"},
+        {q:"Can you help me please?", a:"bana yardım edebilir misin lütfen", hint:"Rica"},
+        {q:"I need to buy some food.", a:"biraz yiyecek almam gerekiyor", hint:"Alışveriş"},
+        {q:"She works at a hospital.", a:"o bir hastanede çalışıyor", hint:"Meslek"},
+        {q:"They are very happy together.", a:"onlar birlikte çok mutlular", hint:"Duygu"},
+        {q:"The train leaves at eight.", a:"tren sekizde kalkıyor", hint:"Ulaşım"},
+        {q:"I haven't seen him lately.", a:"onu son zamanlarda görmedim", hint:"Zaman"},
+        {q:"This book is very interesting.", a:"bu kitap çok ilginç", hint:"Görüş"}
+      ],
+      hard: [
+        {q:"Despite the difficulties, she persisted.", a:"zorluklara rağmen devam etti", hint:"İnat"},
+        {q:"If I had known, I would have come.", a:"bilseydim gelirdim", hint:"Koşul"},
+        {q:"The results were beyond our expectations.", a:"sonuçlar beklentilerimizin ötesindeydi", hint:"Sonuç"},
+        {q:"It is worth considering all options.", a:"tüm seçenekleri düşünmeye değer", hint:"Tavsiye"},
+        {q:"His dedication to work is admirable.", a:"işe olan adanmışlığı takdire şayan", hint:"Karakter"},
+        {q:"She could not contain her excitement.", a:"heyecanını dizginleyemedi", hint:"Duygu"},
+        {q:"We need to address this issue immediately.", a:"bu konuyu derhal ele almamız gerekiyor", hint:"Aciliyet"},
+        {q:"The economy has shown significant improvement.", a:"ekonomi önemli bir iyileşme gösterdi", hint:"Ekonomi"}
+      ]
+    }
+  },
+  "ar-SA": {
+    word: {
+      easy: [
+        {q:"كتاب", a:"kitap", hint:"Nesne"}, {q:"شمس", a:"güneş", hint:"Doğa"},
+        {q:"بحر", a:"deniz", hint:"Coğrafya"}, {q:"قلم", a:"kalem", hint:"Nesne"},
+        {q:"بيت", a:"ev", hint:"Yer"}, {q:"ماء", a:"su", hint:"İçecek"},
+        {q:"نار", a:"ateş", hint:"Doğa"}, {q:"سمك", a:"balık", hint:"Hayvan"},
+        {q:"تفاحة", a:"elma", hint:"Meyve"}, {q:"خبز", a:"ekmek", hint:"Yiyecek"},
+        {q:"قطة", a:"kedi", hint:"Hayvan"}, {q:"كلب", a:"köpek", hint:"Hayvan"},
+        {q:"شجرة", a:"ağaç", hint:"Bitki"}, {q:"مطر", a:"yağmur", hint:"Hava"},
+        {q:"قمر", a:"ay", hint:"Doğa"}, {q:"سماء", a:"gökyüzü", hint:"Doğa"},
+        {q:"باب", a:"kapı", hint:"Nesne"}, {q:"نافذة", a:"pencere", hint:"Nesne"},
+        {q:"حليب", a:"süt", hint:"İçecek"}, {q:"طريق", a:"yol", hint:"Yer"}
+      ],
+      medium: [
+        {q:"مدرسة", a:"okul", hint:"Yer"}, {q:"مستشفى", a:"hastane", hint:"Yer"},
+        {q:"صداقة", a:"arkadaşlık", hint:"Kavram"}, {q:"حرية", a:"özgürlük", hint:"Kavram"},
+        {q:"نجاح", a:"başarı", hint:"Kavram"}, {q:"شجاعة", a:"cesaret", hint:"Karakter"},
+        {q:"صبر", a:"sabır", hint:"Karakter"}, {q:"جميل", a:"güzel", hint:"Sıfat"},
+        {q:"خطير", a:"tehlikeli", hint:"Sıfat"}, {q:"قديم", a:"eski / antik", hint:"Sıfat"},
+        {q:"سعادة", a:"mutluluk", hint:"Duygu"}, {q:"حب", a:"aşk / sevgi", hint:"Duygu"},
+        {q:"علم", a:"bilim / bilgi", hint:"Kavram"}, {q:"ثقافة", a:"kültür", hint:"Kavram"},
+        {q:"طبيعة", a:"doğa", hint:"Coğrafya"}
+      ],
+      hard: [
+        {q:"الديمقراطية", a:"demokrasi", hint:"Siyaset"},
+        {q:"الاستدامة", a:"sürdürülebilirlik", hint:"Kavram"},
+        {q:"الفلسفة", a:"felsefe", hint:"Bilim"},
+        {q:"التكنولوجيا", a:"teknoloji", hint:"Bilim"},
+        {q:"الحضارة", a:"medeniyet / uygarlık", hint:"Tarih"},
+        {q:"الاقتصاد", a:"ekonomi", hint:"Bilim"},
+        {q:"التسامح", a:"hoşgörü / tolerans", hint:"Değer"},
+        {q:"الإبداع", a:"yaratıcılık", hint:"Kavram"}
+      ]
+    },
+    sent: {
+      easy: [
+        {q:"كيف حالك؟", a:"nasılsın", hint:"Selamlama"},
+        {q:"صباح الخير", a:"günaydın", hint:"Selamlama"},
+        {q:"شكراً جزيلاً", a:"çok teşekkür ederim", hint:"Nezaket"},
+        {q:"أنا بخير", a:"iyiyim", hint:"Hal"},
+        {q:"مع السلامة", a:"güle güle / hoşça kal", hint:"Veda"},
+        {q:"اسمي...", a:"benim adım...", hint:"Tanışma"},
+        {q:"أنا جائع", a:"açım / karnım aç", hint:"Duygu"},
+        {q:"أين الحمام؟", a:"tuvalet nerede", hint:"Yer"},
+        {q:"من فضلك ساعدني", a:"lütfen bana yardım et", hint:"Rica"},
+        {q:"لا أفهم", a:"anlamıyorum", hint:"İletişim"}
+      ],
+      medium: [
+        {q:"أنا أحب السفر", a:"seyahati seviyorum", hint:"Hobi"},
+        {q:"هل تتحدث العربية؟", a:"arapça konuşuyor musun", hint:"Dil"},
+        {q:"أريد تعلم اللغة", a:"dil öğrenmek istiyorum", hint:"İstek"},
+        {q:"الطقس جميل اليوم", a:"bugün hava güzel", hint:"Hava"},
+        {q:"هذا الكتاب ممتاز", a:"bu kitap mükemmel", hint:"Görüş"},
+        {q:"أحتاج إلى مساعدة", a:"yardıma ihtiyacım var", hint:"İhtiyaç"},
+        {q:"هو يعمل في المستشفى", a:"o hastanede çalışıyor", hint:"Meslek"},
+        {q:"متى يغادر القطار؟", a:"tren ne zaman kalkıyor", hint:"Ulaşım"}
+      ],
+      hard: [
+        {q:"على الرغم من الصعوبات، نجح في النهاية", a:"zorluklara rağmen sonunda başardı", hint:"İnat"},
+        {q:"التعليم هو مفتاح النجاح في الحياة", a:"eğitim hayatta başarının anahtarıdır", hint:"Eğitim"},
+        {q:"يجب أن نتعاون من أجل مستقبل أفضل", a:"daha iyi bir gelecek için iş birliği yapmalıyız", hint:"İşbirliği"}
+      ]
+    }
+  }
+};
+
+// ==================== DURUM ====================
+let user = {
+  name: "", score: 0, streak: 0, maxStreak: 0,
+  level: 1, wordsLearned: 0, correctCount: 0,
+  lang: "en-US", mode: "word", diff: "easy",
+  usedWords: [], usedSents: [], lastPlayed: null
+};
+
+let game = {
+  type: "translate", // translate | pronounce
+  currentQ: null, hearts: 3,
+  questionCount: 0, totalQuestions: 10,
+  sessionScore: 0, answered: false
+};
+
+let speechRec = null;
+let micActive = false;
+
+// ==================== LOGIN ====================
+function login() {
+  const name = document.getElementById('username-input').value.trim();
+  if(!name) { shakeInput('username-input'); return; }
+  
+  const saved = localStorage.getItem('lq_user_' + name);
+  if(saved) {
+    user = JSON.parse(saved);
+  } else {
+    user.name = name;
+    saveUser();
+  }
+  
+  updateHomeUI();
+  showScreen('home-screen');
+}
+
+function shakeInput(id) {
+  const el = document.getElementById(id);
+  el.style.borderColor = 'var(--red)';
+  el.placeholder = 'Lütfen isim girin!';
+  setTimeout(() => { el.style.borderColor = ''; el.placeholder = 'Adınızı girin...'; }, 2000);
+}
+
+// ==================== HOME ====================
+function updateHomeUI() {
+  document.getElementById('home-username').textContent = `Merhaba, ${user.name}!`;
+  document.getElementById('stat-score').textContent = user.score;
+  document.getElementById('stat-streak').textContent = user.streak;
+  document.getElementById('stat-level').textContent = user.level;
+  document.getElementById('stat-words').textContent = user.wordsLearned;
+}
+
+function selectLang(lang) {
+  user.lang = lang;
+  document.getElementById('lang-en').classList.toggle('selected', lang === 'en-US');
+  document.getElementById('lang-ar').classList.toggle('selected', lang === 'ar-SA');
+}
+
+function selectMode(mode) {
+  user.mode = mode;
+  ['word','sent','mixed'].forEach(m => {
+    document.getElementById('mode-'+m).classList.toggle('active', m === mode);
+  });
+}
+
+function selectDiff(diff) {
+  user.diff = diff;
+  ['easy','medium','hard'].forEach(d => {
+    const el = document.getElementById('diff-'+d);
+    el.className = 'diff-card ' + d + (d === diff ? ' active' : '');
+  });
+}
+
+// ==================== GAME START ====================
+function startGame(type) {
+  game.type = type;
+  game.hearts = Infinity;
+  game.questionCount = 0;
+  game.totalQuestions = type === 'pronounce' ? 5 : 10;
+  game.sessionScore = 0;
+  game.answered = false;
+
+  if(type === 'translate') {
+    showScreen('game-screen');
+    updateHearts();
+    nextQuestion();
+  } else {
+    showScreen('pronun-screen');
+    updatePronunHearts();
+    nextPronun();
+  }
+}
+
+// ==================== QUESTION LOGIC ====================
+function getPool() {
+  const langDB = DB[user.lang];
+  let pool = [];
+  
+  if(user.mode === 'word') pool = langDB.word[user.diff] || langDB.word.easy;
+  else if(user.mode === 'sent') pool = langDB.sent[user.diff] || langDB.sent.easy;
+  else {
+    // mixed
+    pool = [...(langDB.word[user.diff] || langDB.word.easy),
+            ...(langDB.sent[user.diff] || langDB.sent.easy)];
+  }
+  return pool;
+}
+
+function getNextItem() {
+  const pool = getPool();
+  const usedKey = user.mode === 'sent' ? 'usedSents' : 'usedWords';
+  
+  let available = pool.filter(item => !user[usedKey].includes(item.q));
+  if(available.length === 0) {
+    user[usedKey] = [];
+    available = pool;
+    saveUser();
+  }
+  
+  return available[Math.floor(Math.random() * available.length)];
+}
+
+function nextQuestion() {
+  hideFeedback();
+  game.answered = false;
+  
+  if(game.questionCount >= game.totalQuestions) {
+    endSession();
+    return;
+  }
+
+  game.currentQ = getNextItem();
+  game.questionCount++;
+  
+  const progress = (game.questionCount / game.totalQuestions) * 100;
+  document.getElementById('progress-bar').style.width = progress + '%';
+  
+  const isWord = (user.mode === 'word') || 
+    (user.mode === 'mixed' && !game.currentQ.q.includes(' '));
+  
+  document.getElementById('q-type-badge').innerHTML = isWord ? '🔤 Kelime' : '📝 Cümle';
+  document.getElementById('q-prompt').textContent = `${isWord ? 'Kelimenin' : 'Cümlenin'} Türkçesini yazın veya söyleyin:`;
+  document.getElementById('q-word').textContent = game.currentQ.q;
+  document.getElementById('q-word-sub').textContent = '';
+  document.getElementById('text-answer').value = '';
+  document.getElementById('text-answer').className = '';
+  document.getElementById('text-answer').focus();
+
+  // Auto speak
+  setTimeout(() => speakCurrent(), 400);
+}
+
+function speakCurrent() {
+  if(!game.currentQ) return;
+  const msg = new SpeechSynthesisUtterance(game.currentQ.q);
+  msg.lang = user.lang;
+  msg.rate = 0.75;
+  msg.pitch = 1;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(msg);
+}
+
+// ==================== ANSWER CHECKING ====================
+function normalize(str) {
+  return str.toLowerCase()
+    .replace(/[ğ]/g, 'g').replace(/[ü]/g, 'u').replace(/[ş]/g, 's')
+    .replace(/[ı]/g, 'i').replace(/[ö]/g, 'o').replace(/[ç]/g, 'c')
+    .replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+}
+
+function fuzzyMatch(input, answer) {
+  const inp = normalize(input);
+  const ans = normalize(answer);
+  if(inp === ans) return 1.0;
+  
+  // Check if answer contains all significant words from input
+  const ansWords = ans.split(' ');
+  const inpWords = inp.split(' ');
+  
+  // Accept partial match (all answer words are in input or vice versa)
+  const ansInInp = ansWords.filter(w => w.length > 2).every(w => inp.includes(w));
+  const inpInAns = inpWords.filter(w => w.length > 2).every(w => ans.includes(w));
+  
+  if(ansInInp || inpInAns) return 0.9;
+  
+  // Levenshtein for short words
+  if(ans.length <= 10) {
+    const dist = levenshtein(inp, ans);
+    return Math.max(0, 1 - dist / Math.max(ans.length, inp.length));
+  }
+  
+  return 0;
+}
+
+function levenshtein(a, b) {
+  const m = a.length, n = b.length;
+  const dp = Array.from({length: m+1}, (_, i) => [i]);
+  for(let j = 0; j <= n; j++) dp[0][j] = j;
+  for(let i = 1; i <= m; i++)
+    for(let j = 1; j <= n; j++)
+      dp[i][j] = a[i-1] === b[j-1] ? dp[i-1][j-1] :
+        1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+  return dp[m][n];
+}
+
+function checkAnswer() {
+  if(game.answered) return;
+  const input = document.getElementById('text-answer').value.trim();
+  if(!input) return;
+  
+  // Handle multiple correct answers (separated by /)
+  const answers = game.currentQ.a.split('/').map(s => s.trim());
+  const score = Math.max(...answers.map(ans => fuzzyMatch(input, ans)));
+  
+  if(score >= 0.7) {
+    onCorrect();
+  } else {
+    onWrong(input);
+  }
+}
+
+function liveCheck(input) {
+  if(game.answered) return;
+  const val = input.value.trim();
+  if(!val) { input.className = ''; return; }
+  const answers = game.currentQ.a.split('/').map(s => s.trim());
+  const score = Math.max(...answers.map(ans => fuzzyMatch(val, ans)));
+  if(score >= 0.9) {
+    input.classList.add('input-correct');
+    input.classList.remove('input-wrong');
+  } else {
+    input.classList.remove('input-correct');
+    input.classList.remove('input-wrong');
+  }
+}
+
+function onCorrect() {
+  if(game.answered) return;
+  game.answered = true;
+  
+  const points = calcPoints();
+  user.score += points;
+  game.sessionScore += points;
+  user.streak++;
+  if(user.streak > user.maxStreak) user.maxStreak = user.streak;
+  user.correctCount++;
+  user.wordsLearned++;
+  
+  // Mark as used
+  const usedKey = (user.mode === 'sent') ? 'usedSents' : 'usedWords';
+  if(!user[usedKey].includes(game.currentQ.q)) user[usedKey].push(game.currentQ.q);
+  
+  checkLevelUp();
+  saveUser();
+  updateHomeUI();
+
+  confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 }, colors: ['#58cc02','#7cdb02','#fff'] });
+  showFeedback('correct', '🎉 Harika!', `+${points} puan • Seri: ${user.streak} 🔥`);
+}
+
+function onWrong(input) {
+  if(game.answered) return;
+  game.answered = true;
+  
+  game.hearts--;
+  user.streak = 0;
+  saveUser();
+  updateHearts();
+  
+  document.getElementById('text-answer').classList.add('input-wrong');
+  
+  showFeedback('wrong', '❌ Yanlış!', `Doğru cevap: "${game.currentQ.a}"`);
+}
+
+function calcPoints() {
+  const base = { easy: 10, medium: 15, hard: 25 }[user.diff] || 10;
+  const bonus = Math.min(user.streak, 5) * 2;
+  return base + bonus;
+}
+
+function skipQuestion() {
+  user.streak = 0;
+  game.sessionScore = Math.max(0, game.sessionScore - 5);
+  nextQuestion();
+}
+
+function updateHearts() {
+  const h = document.getElementById('hearts-display');
+  h.textContent = '♾️';
+}
+
+// ==================== MIC ANSWER ====================
+function toggleMic() {
+  if(micActive) {
+    if(speechRec) speechRec.stop();
+    return;
+  }
+  startMicAnswer();
+}
+
+function startMicAnswer() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR) { alert('Tarayıcınız ses tanıma desteklemiyor. Lütfen Chrome veya Edge kullanın.'); return; }
+
+  speechRec = new SR();
+  speechRec.lang = 'tr-TR';
+  speechRec.continuous = false;
+  speechRec.interimResults = false;
+
+  speechRec.onstart = () => {
+    micActive = true;
+    document.getElementById('mic-btn').classList.add('listening');
+    document.getElementById('mic-label').textContent = '🔴 Dinliyorum... (tekrar bas = durdur)';
+  };
+  speechRec.onresult = (e) => {
+    const text = e.results[0][0].transcript;
+    document.getElementById('text-answer').value = text;
+    checkAnswer();
+  };
+  speechRec.onerror = () => {
+    micActive = false;
+    document.getElementById('mic-btn').classList.remove('listening');
+    document.getElementById('mic-label').textContent = 'Sesli Cevap Ver';
+  };
+  speechRec.onend = () => {
+    micActive = false;
+    document.getElementById('mic-btn').classList.remove('listening');
+    document.getElementById('mic-label').textContent = 'Sesli Cevap Ver';
+  };
+  speechRec.start();
+}
+
+// ==================== FEEDBACK PANEL ====================
+function showFeedback(type, title, msg) {
+  const panel = document.getElementById('feedback-panel');
+  panel.className = `feedback-panel ${type} show`;
+  document.getElementById('feedback-title').textContent = title;
+  document.getElementById('feedback-msg').textContent = msg;
+  document.getElementById('feedback-btn').onclick = nextQuestion;
+}
+
+function hideFeedback() {
+  document.getElementById('feedback-panel').className = 'feedback-panel';
+}
+
+// ==================== SESSION END ====================
+function endSession() {
+  hideFeedback();
+  const icon = game.sessionScore > 80 ? '🏆' : game.sessionScore > 40 ? '⭐' : '🌱';
+  const desc = `${game.questionCount} soruda ${game.sessionScore} puan kazandın!`;
+  showLevelUp(icon, 'Tur Tamamlandı!', desc);
+}
+
+// ==================== PRONUNCIATION ====================
+let pronunQ = null;
+let pronunCount = 0;
+let pronunHearts = Infinity;
+
+function nextPronun() {
+  hidePronunFeedback();
+  document.getElementById('pronun-result').style.display = 'none';
+  document.getElementById('pronun-btns').style.display = 'none';
+  
+  if(pronunCount >= 5) {
+    showLevelUp('🎤', 'Telaffuz Turu Bitti!', `${pronunCount} kelimeyi telaffuz ettin!`);
+    return;
+  }
+
+  pronunQ = getNextItem();
+  pronunCount++;
+  
+  document.getElementById('pronun-progress').style.width = (pronunCount / 5 * 100) + '%';
+  document.getElementById('pronun-target').textContent = pronunQ.q;
+  document.getElementById('pronun-phonetic').textContent = '';
+  document.getElementById('pronun-highlight').innerHTML = '';
+  document.getElementById('pronun-mic-label').textContent = 'Söylemeye Başla';
+  document.getElementById('pronun-mic-btn').classList.remove('listening');
+  
+  // Prompt
+  const isAr = user.lang === 'ar-SA';
+  document.getElementById('pronun-prompt').textContent = 
+    isAr ? 'Bu Arapça ifadeyi Türkçe seslendir:' :
+    'Bu İngilizce ifadeyi doğru telaffuz et:';
+
+  // Auto speak example  
+  setTimeout(() => speakPronunTarget(), 500);
+}
+
+function speakPronunTarget() {
+  if(!pronunQ) return;
+  const msg = new SpeechSynthesisUtterance(pronunQ.q);
+  msg.lang = user.lang;
+  msg.rate = 0.7;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(msg);
+}
+
+function startPronunMic() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR) { alert('Ses tanıma desteklenmiyor. Chrome veya Edge kullanın.'); return; }
+
+  const rec = new SR();
+  // For pronunciation check: recognize in target language
+  rec.lang = user.lang;
+  rec.continuous = false;
+  rec.interimResults = false;
+
+  rec.onstart = () => {
+    document.getElementById('pronun-mic-btn').classList.add('listening');
+    document.getElementById('pronun-mic-label').textContent = '🔴 Sizi dinliyorum...';
+  };
+
+  rec.onresult = (e) => {
+    const heard = e.results[0][0].transcript.trim();
+    const confidence = e.results[0][0].confidence || 0.5;
+    evaluatePronunciation(heard, confidence);
+  };
+
+  rec.onerror = (e) => {
+    document.getElementById('pronun-mic-btn').classList.remove('listening');
+    document.getElementById('pronun-mic-label').textContent = 'Tekrar Deneyin';
+    if(e.error === 'not-allowed') alert('Mikrofon izni verilmedi!');
+  };
+
+  rec.onend = () => {
+    document.getElementById('pronun-mic-btn').classList.remove('listening');
+    document.getElementById('pronun-mic-label').textContent = 'Tekrar Deneyin';
+  };
+
+  rec.start();
+}
+
+function evaluatePronunciation(heard, confidence) {
+  document.getElementById('pronun-result').style.display = 'block';
+  document.getElementById('heard-text').textContent = heard;
+
+  const target = pronunQ.q;
+  const score = calcPronunScore(heard, target, confidence);
+  
+  const ring = document.getElementById('pronun-score-ring');
+  const num = document.getElementById('pronun-score-num');
+  num.textContent = score;
+  ring.className = 'score-ring ' + (score >= 75 ? 'great' : score >= 50 ? 'ok' : 'poor');
+  
+  // Visual word breakdown
+  showWordHighlight(target, heard, score);
+  
+  document.getElementById('pronun-btns').style.display = 'flex';
+
+  if(score >= 60) {
+    user.score += Math.round(score / 10);
+    user.streak++;
+    saveUser();
+    confetti({ particleCount: 60, spread: 50, origin: { y: 0.5 }, colors: ['#58cc02','#7cdb02'] });
+    showPronunFeedback('correct', 
+      score >= 85 ? '🌟 Mükemmel Telaffuz!' : '✅ İyi Telaffuz!',
+      score >= 85 ? 'Harika söyledin!' : 'Yeterince anlaşılır söyledin.');
+  } else {
+    pronunQ && (pronunQ._wrong = true);
+    user.streak = 0;
+    saveUser();
+    showPronunFeedback('wrong', '🔄 Tekrar Dene!', `Duyulan: "${heard}" — Hedef: "${target}"`);
+  }
+}
+
+function calcPronunScore(heard, target, confidence) {
+  const h = heard.toLowerCase().replace(/[^a-zğüşıöçа-яء-ي]/gi, '').trim();
+  const t = target.toLowerCase().replace(/[^a-zğüşıöçа-яء-ي]/gi, '').trim();
+  
+  if(h === t) return 100;
+  
+  const dist = levenshtein(h, t);
+  const simScore = Math.max(0, 1 - dist / Math.max(h.length, t.length, 1));
+  const confScore = confidence;
+  
+  return Math.round((simScore * 0.7 + confScore * 0.3) * 100);
+}
+
+function showWordHighlight(target, heard, score) {
+  const container = document.getElementById('pronun-highlight');
+  container.innerHTML = '';
+  
+  const words = target.split(' ');
+  const heardWords = heard.toLowerCase().split(' ');
+  
+  words.forEach(word => {
+    const span = document.createElement('span');
+    span.className = 'syllable';
+    span.textContent = word;
+    
+    const matches = heardWords.some(hw => {
+      const s = calcPronunScore(hw, word.toLowerCase(), 0.8);
+      return s > 60;
+    });
+    
+    span.classList.add(matches ? 'correct' : (score > 50 ? 'neutral' : 'wrong'));
+    container.appendChild(span);
+  });
+}
+
+function showPronunFeedback(type, title, msg) {
+  const panel = document.getElementById('pronun-feedback');
+  panel.className = `feedback-panel ${type} show`;
+  document.getElementById('pronun-fb-title').textContent = title;
+  document.getElementById('pronun-fb-msg').textContent = msg;
+}
+
+function hidePronunFeedback() {
+  document.getElementById('pronun-feedback').className = 'feedback-panel';
+}
+
+function skipPronun() {
+  pronunCount++; // don't reward
+  user.streak = 0;
+  nextPronun();
+}
+
+function updatePronunHearts() {
+  document.getElementById('pronun-hearts').textContent = '♾️';
+}
+
+// ==================== LEVEL UP ====================
+const LEVELS = [
+  {min: 0, name: "Çaylak 🌱"}, {min: 50, name: "Acemi 📖"},
+  {min: 150, name: "Öğrenci 🎓"}, {min: 300, name: "İleri 🌟"},
+  {min: 500, name: "Uzman 🏅"}, {min: 800, name: "Usta 🎖️"},
+  {min: 1200, name: "Üstat 🏆"}, {min: 2000, name: "Efsane 👑"}
+];
+
+function checkLevelUp() {
+  const newLevel = LEVELS.filter(l => user.score >= l.min).length;
+  if(newLevel > user.level) {
+    user.level = newLevel;
+    const levelInfo = LEVELS[newLevel - 1];
+    setTimeout(() => {
+      showLevelUp('⬆️', `Seviye ${user.level}!`, `Yeni unvanınız: ${levelInfo.name}`);
+    }, 1500);
+  }
+}
+
+function showLevelUp(icon, title, desc) {
+  document.getElementById('lu-icon').textContent = icon;
+  document.getElementById('lu-title').textContent = title;
+  document.getElementById('lu-desc').textContent = desc;
+  document.getElementById('levelup-overlay').classList.add('show');
+}
+
+function closeLevelUp() {
+  document.getElementById('levelup-overlay').classList.remove('show');
+}
+
+// ==================== PROFILE ====================
+const BADGES = [
+  { id: 'first', icon: '🌱', name: 'İlk Adım', condition: u => u.correctCount >= 1 },
+  { id: 'streak5', icon: '🔥', name: '5 Seri', condition: u => u.maxStreak >= 5 },
+  { id: 'streak10', icon: '⚡', name: '10 Seri', condition: u => u.maxStreak >= 10 },
+  { id: 'words10', icon: '📚', name: '10 Kelime', condition: u => u.wordsLearned >= 10 },
+  { id: 'words50', icon: '📖', name: '50 Kelime', condition: u => u.wordsLearned >= 50 },
+  { id: 'score100', icon: '💯', name: '100 Puan', condition: u => u.score >= 100 },
+  { id: 'score500', icon: '🏆', name: '500 Puan', condition: u => u.score >= 500 },
+  { id: 'level3', icon: '⭐', name: 'Seviye 3', condition: u => u.level >= 3 },
+  { id: 'master', icon: '👑', name: 'Usta', condition: u => u.level >= 6 },
+];
+
+function updateProfile() {
+  document.getElementById('profile-name').textContent = user.name;
+  const levelInfo = LEVELS[Math.min(user.level - 1, LEVELS.length - 1)];
+  document.getElementById('profile-level').textContent = `Seviye ${user.level} • ${levelInfo.name}`;
+  document.getElementById('p-score').textContent = user.score;
+  document.getElementById('p-streak').textContent = user.maxStreak;
+  document.getElementById('p-words').textContent = user.wordsLearned;
+  document.getElementById('p-correct').textContent = user.correctCount;
+
+  const grid = document.getElementById('badge-grid');
+  grid.innerHTML = '';
+  BADGES.forEach(b => {
+    const earned = b.condition(user);
+    const div = document.createElement('div');
+    div.className = 'badge-item' + (earned ? ' earned' : '');
+    div.innerHTML = `<div class="badge-icon">${earned ? b.icon : '🔒'}</div>${b.name}`;
+    grid.appendChild(div);
+  });
+}
+
+function resetData() {
+  if(!confirm('Tüm ilerlemeniz silinecek. Emin misiniz?')) return;
+  localStorage.removeItem('lq_user_' + user.name);
+  location.reload();
+}
+
+// ==================== SCREEN MANAGEMENT ====================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  
+  if(id === 'profile-screen') updateProfile();
+  if(id === 'home-screen') updateHomeUI();
+}
+
+function exitGame() {
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
+  if(speechRec) { try { speechRec.stop(); } catch(e) {} }
+  micActive = false;
+  pronunCount = 0;
+  pronunHearts = Infinity;
+  showScreen('home-screen');
+}
+
+// ==================== SAVE/LOAD ====================
+function saveUser() {
+  localStorage.setItem('lq_user_' + user.name, JSON.stringify(user));
+}
+
+// ==================== KEYBOARD ====================
+document.addEventListener('keydown', e => {
+  if(e.key === 'Enter') {
+    const activeScreen = document.querySelector('.screen.active');
+    if(!activeScreen) return;
+    if(activeScreen.id === 'login-screen') login();
+    else if(activeScreen.id === 'game-screen') checkAnswer();
+  }
+});
+</script>
+</body>
+</html>
